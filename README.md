@@ -239,3 +239,4 @@ Probability estimates.
 score(X, y, sample_weight=None)[source]
 Returns the mean accuracy on the given test data and labels.
 
+
