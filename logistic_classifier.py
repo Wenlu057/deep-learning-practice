@@ -60,7 +60,7 @@ train_filename = maybe_download('notMNIST_large.tar.gz', 247336696)
 test_filename = maybe_download('notMNIST_small.tar.gz', 8458043)
 
 
-# In[5]:
+# In[4]:
 
 num_classes = 10
 np.random.seed(133)
@@ -86,11 +86,11 @@ def maybe_extract(filename, force=False):
   print(data_folders)
   return data_folders
   
-train_folders = maybe_extract(train_filename)
+train_folders = maybe_extract(train_filename) #[.\notMNIST_large\A, .\notMNIST_large\B,......, .\notMNIST_large\J]
 test_folders = maybe_extract(test_filename)
 
 
-# In[28]:
+# In[5]:
 
 file_path =os.path.splitext(os.path.splitext(train_filename)[0])[0]
 name = train_folders[0] + '\\bGFDYXJ0b29uZXJpZS50dGY=.png'
@@ -98,7 +98,7 @@ print (name)
 Image(filename= name) 
 
 
-# In[29]:
+# In[7]:
 
 image_size = 28  # Pixel width and height.
 pixel_depth = 255.0  # Number of levels per pixel.
@@ -111,10 +111,11 @@ def load_letter(folder, min_num_images):
   print(folder)
   num_images = 0
   for image in image_files:
-    image_file = os.path.join(folder, image)
+    image_file = os.path.join(folder, image)#.\notMNIST_large\A\MDEtMDEtMDAudHRm.png
     try:
       image_data = (ndimage.imread(image_file).astype(float) - 
                     pixel_depth / 2) / pixel_depth
+    #it doesn't change the content of your image but it makes it much easier for the optimation to proceed numerically.
       if image_data.shape != (image_size, image_size):
         raise Exception('Unexpected image shape: %s' % str(image_data.shape))
       dataset[num_images, :, :] = image_data
@@ -151,6 +152,256 @@ def maybe_pickle(data_folders, min_num_images_per_class, force=False):
   
   return dataset_names
 
-train_datasets = maybe_pickle(train_folders, 45000)
+train_datasets = maybe_pickle(train_folders, 45000)# [.\notMNIST_large\A.pickle,.\notMNIST_large\B.pickle, ...]
 test_datasets = maybe_pickle(test_folders, 1800)
+
+
+# In[36]:
+
+#problem 2
+def maybe_unpickle(pickle_datasets):
+    for x in range(0, 10):
+        try:
+            with open(pickle_datasets[x], 'rb') as f:
+                # The protocol version used is detected automatically, so we do not
+                # have to specify it.
+                data = pickle.load(f)
+                image_data = data[0, :, :]
+                plt.imshow(image_data)
+                plt.show()
+        except Exception as e:
+            print('unable to load data:', e)
+       
+    
+maybe_unpickle(train_datasets)
+
+
+# In[9]:
+
+#problem 3
+def verify_data(pickle_datasets):
+    for datasets in pickle_datasets:
+        try:
+            with open(datasets, 'rb') as f:
+                data = pickle.load(f)
+                print (data.shape)
+        except Exception as e:
+            print('unable to load data:', e)
+verify_data(train_datasets)
+            
+        
+    
+
+
+# In[10]:
+
+def make_arrays(nb_rows, img_size):
+  if nb_rows:
+    dataset = np.ndarray((nb_rows, img_size, img_size), dtype=np.float32)
+    labels = np.ndarray(nb_rows, dtype=np.int32)
+  else:
+    dataset, labels = None, None
+  return dataset, labels
+
+def merge_datasets(pickle_files, train_size, valid_size=0):
+  num_classes = len(pickle_files) # 10  [.\notMNIST_large\A.pickle,.\notMNIST_large\B.pickle, ...]
+  valid_dataset, valid_labels = make_arrays(valid_size, image_size) 
+    #valid_dataset: ndarray(10000,28,28) valid_labels: ndarray(10000)
+  train_dataset, train_labels = make_arrays(train_size, image_size)
+    #valid_dataset: ndarray(200000,28,28) valid_labels: ndarray(200000)
+  vsize_per_class = valid_size // num_classes
+  tsize_per_class = train_size // num_classes
+  print ("-----------",vsize_per_class)
+    
+  start_v, start_t = 0, 0
+  end_v, end_t = vsize_per_class, tsize_per_class
+  end_l = vsize_per_class+tsize_per_class
+  for label, pickle_file in enumerate(pickle_files):    #[(0,'.\notMNIST_large\A.pickle'), (1, '.\notMNIST_large\B.pickle')...]   
+    try:
+      with open(pickle_file, 'rb') as f:
+        letter_set = pickle.load(f) #letter_set (52912, 28, 28)--> 52912 kinds of A 
+        # let's shuffle the letters to have random validation and training set
+        np.random.shuffle(letter_set)
+        if valid_dataset is not None:
+          valid_letter = letter_set[:vsize_per_class, :, :]
+          valid_dataset[start_v:end_v, :, :] = valid_letter
+          valid_labels[start_v:end_v] = label
+          start_v += vsize_per_class
+          end_v += vsize_per_class
+                    
+        train_letter = letter_set[vsize_per_class:end_l, :, :]
+        train_dataset[start_t:end_t, :, :] = train_letter
+        train_labels[start_t:end_t] = label
+        start_t += tsize_per_class
+        end_t += tsize_per_class
+    except Exception as e:
+      print('Unable to process data from', pickle_file, ':', e)
+      raise
+    
+  return valid_dataset, valid_labels, train_dataset, train_labels
+            
+            
+train_size = 200000
+valid_size = 10000
+test_size = 10000
+
+valid_dataset, valid_labels, train_dataset, train_labels = merge_datasets(
+  train_datasets, train_size, valid_size)
+_, _, test_dataset, test_labels = merge_datasets(test_datasets, test_size)
+
+print('Training:', train_dataset.shape, train_labels.shape)
+print('Validation:', valid_dataset.shape, valid_labels.shape)
+print('Testing:', test_dataset.shape, test_labels.shape)
+
+
+# In[11]:
+
+pickle_file = os.path.join(data_root, 'notMNIST.pickle')
+
+try:
+  f = open(pickle_file, 'wb')
+  save = {
+    'train_dataset': train_dataset,
+    'train_labels': train_labels,
+    'valid_dataset': valid_dataset,
+    'valid_labels': valid_labels,
+    'test_dataset': test_dataset,
+    'test_labels': test_labels,
+    }
+  pickle.dump(save, f, pickle.HIGHEST_PROTOCOL)
+  f.close()
+except Exception as e:
+  print('Unable to save data to', pickle_file, ':', e)
+  raise
+
+
+# In[184]:
+
+def randomize(dataset, labels):
+  permutation = np.random.permutation(labels.shape[0])
+  shuffled_dataset = dataset[permutation,:,:]
+  shuffled_labels = labels[permutation]
+  return shuffled_dataset, shuffled_labels
+train_dataset, train_labels = randomize(train_dataset, train_labels)
+test_dataset, test_labels = randomize(test_dataset, test_labels)
+valid_dataset, valid_labels = randomize(valid_dataset, valid_labels)
+
+
+# In[12]:
+
+statinfo = os.stat(pickle_file)
+print('Compressed pickle size:', statinfo.st_size)
+
+
+# In[161]:
+
+#Problem 5
+# By construction, this dataset might contain a lot of overlapping samples, including training data that's also contained in the validation and test set! Overlap between training and test can skew the results if you expect to use your model in an environment where there is never an overlap, but are actually ok if you expect to see training samples recur when you use it. Measure how much overlap there is between training, validation and test samples.
+# Optional questions:
+# What about near duplicates between datasets? (images that are almost identical)
+# Create a sanitized validation and test set, and compare your accuracy on those in subsequent assignments.
+
+import random
+def display_overlap(overlap, source_dataset, target_dataset):
+    item = random.choice(list(overlap.keys()))
+    imgs = np.concatenate(([source_dataset[item]], target_dataset[overlap[item][0:7]]))
+    plt.suptitle(item)
+    for i, img in enumerate(imgs):
+        plt.subplot(2, 1, i+1)
+        plt.axis('off')
+        plt.imshow(img)
+        plt.show()
+
+
+# In[75]:
+
+def extract_overlap(dataset_1, dataset_2):
+  overlap = {}
+  for i, img_1 in enumerate(dataset_1):
+    for j, img_2 in enumerate(dataset_2):     
+      if np.array_equal(img_1, img_2):
+        if not i in overlap.keys():
+          overlap[i] = []
+        overlap[i].append(j)
+  return overlap
+
+
+# In[172]:
+
+import hashlib
+def sanitize(dataset_1, dataset_2, labels_1):
+    dataset_hash_1 = np.array([hashlib.sha256(img).hexdigest() for img in dataset_1])
+    dataset_hash_2 = np.array([hashlib.sha256(img).hexdigest() for img in dataset_2])
+    overlap = [] # list of indexes
+    for i, hash1 in enumerate(dataset_hash_1):
+        duplicates = np.where(dataset_hash_2 == hash1)
+        if len(duplicates[0]):
+          overlap.append(i) 
+    return np.delete(dataset_1, overlap, 0), np.delete(labels_1, overlap, None)
+
+
+# In[76]:
+
+get_ipython().magic('time overlap_test_train = extract_overlap(test_dataset[:200], train_dataset)')
+
+
+# In[167]:
+
+get_ipython().magic('time test_dataset_sanit, test_labels_sanit = sanetize(test_dataset[:200], train_dataset, test_labels[:200])')
+print('Overlapping images removed: ', len(test_dataset[:200]) - len(test_dataset_sanit))
+
+
+# In[173]:
+
+get_ipython().magic('time test_dataset_sanit, test_labels_sanit = sanitize(test_dataset, train_dataset, test_labels)')
+print('Overlapping images removed: ', len(test_dataset) - len(test_dataset_sanit))
+
+
+# In[162]:
+
+print(overlap_test_train)
+# print('Number of overlaps:', len(overlap_test_train.keys()))
+display_overlap(overlap_test_train, test_dataset[:200], train_dataset)
+
+
+# In[202]:
+
+#Problem 6
+# Let's get an idea of what an off-the-shelf classifier can give you on this data. It's always good to check that there is something to learn, and that it's a problem that is not so trivial that a canned solution solves it.
+# Train a simple model on this data using 50, 100, 1000 and 5000 training samples. Hint: you can use the LogisticRegression model from sklearn.linear_model.
+# Optional question: train an off-the-shelf model on all the data!
+# clf = LogisticRegression(solver='sag',multi_class='multinomial')
+X_test = test_dataset.reshape(test_size, -1)
+y_test = test_labels
+sample_size = 50
+
+res = {}
+for sample_size in [50, 100, 1000, 5000, 10000, 50000]:
+    clf = LogisticRegression(solver='sag',multi_class='multinomial', n_jobs=-1)
+    X_train = train_dataset[:sample_size].reshape(sample_size, -1)
+    y_train = train_labels[:sample_size]
+    clf.fit(X_train, y_train)
+    score = clf.score(X_test, y_test)
+    res[sample_size] = {'clf': clf, 'score': score}
+    print(sample_size, score)
+
+
+# In[191]:
+
+pretty_labels = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E', 5: 'F', 6: 'G', 7: 'H', 8: 'I', 9: 'J'}
+
+def disp_sample_dataset(dataset, labels):
+  items = random.sample(range(len(labels)), 8)
+  for i, item in enumerate(items):
+    plt.subplot(2, 4, i+1)
+    plt.axis('off')
+    plt.title(pretty_labels[labels[item]])
+    plt.imshow(dataset[item])
+    plt.show()
+
+
+# In[192]:
+
+pred_labels = clf.predict(X_test)
+disp_sample_dataset(test_dataset, pred_labels)
 
