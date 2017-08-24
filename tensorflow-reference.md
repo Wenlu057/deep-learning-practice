@@ -274,3 +274,51 @@ Dropout on the hidden layer of the neural network. Remember: Dropout should only
   loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits, tf_train_labels))
 ```
 
+**tf.nn.conv2d**
+
+
+```
+conv2d(
+    input,
+    filter,
+    strides,
+    padding,
+    use_cudnn_on_gpu=None,
+    data_format=None,
+    name=None
+)
+```
+
+
+
+Computes a 2-D convolution given 4-D input and filter tensors.
+
+Given an input tensor of shape [batch, in_height, in_width, in_channels] and a filter / kernel tensor of shape [filter_height, filter_width, in_channels, out_channels]
+Must have strides[0] = strides[3] = 1. For the most common case of the same horizontal and vertices strides, strides = [1, stride, stride, 1].
+padding: A string from: "SAME", "VALID". The type of padding algorithm to use.
+
+**tf.nn.max_pool**
+
+
+```
+max_pool(
+    value,
+    ksize,
+    strides,
+    padding,
+    data_format='NHWC',
+    name=None
+)
+```
+Performs the max pooling on the input.
+Args:
+_value:_ A 4-D Tensor with shape [batch, height, width, channels] and type tf.float32.
+_ksize:_ A list of ints that has length >= 4. The size of the window for each dimension of the input tensor.
+_strides:_ A list of ints that has length >= 4. The stride of the sliding window for each dimension of the input tensor.
+_padding:_ A string, either 'VALID' or 'SAME'. The padding algorithm. See the comment here
+data_format: A string. 'NHWC' and 'NCHW' are supported.
+_name:_ Optional name for the operation.
+
+**tf.nn.avg_pool**
+Performs the average pooling on the input.
+Each entry in output is the mean of the corresponding size ksize window in value.
