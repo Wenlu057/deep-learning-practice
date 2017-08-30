@@ -45,6 +45,15 @@ A default Graph is always registered, and accessible by calling tf.get_default_g
 **tf.get_default_graph**
 Returns the default graph for the current thread.
 
+### tf.device
+
+
+```
+device(device_name_or_function)
+```
+Wrapper for Graph.device() using the default graph.
+-device_name_or_function: The device name or function to use in the context.
+
 ### tf.constant
 
 
@@ -170,6 +179,34 @@ truncated_normal(
 ```
 Outputs random values from a truncated normal distribution.
 
+### tf.random_uniform
+
+
+```
+random_uniform(
+    shape,
+    minval=0,
+    maxval=None,
+    dtype=tf.float32,
+    seed=None,
+    name=None
+)
+```
+Outputs random values from a uniform distribution.
+
+
+### Module: tf.compat
+**tf.compat.as_str**
+
+
+```
+as_str(
+    bytes_or_text, # A bytes, str, or unicode object.
+    encoding='utf-8'
+)
+```
+Converts either bytes or unicode to bytes, using utf-8 encoding for text.
+Returns: A bytes object.
 ### Module: tf.train
 Support for training models.
 **tf.train.GradientDescentOptimizer**
@@ -322,3 +359,44 @@ _name:_ Optional name for the operation.
 **tf.nn.avg_pool**
 Performs the average pooling on the input.
 Each entry in output is the mean of the corresponding size ksize window in value.
+
+### tf.nn.embedding_lookup
+
+
+```
+embedding_lookup(
+    params,
+    ids,
+    partition_strategy='mod',
+    name=None,
+    validate_indices=True,
+    max_norm=None
+)
+```
+
+Looks up ids in a list of embedding tensors.
+
+
+### tf.nn.sampled_softmax_loss
+
+
+
+```
+sampled_softmax_loss(
+    weights,
+    biases,
+    labels,
+    inputs,
+    num_sampled,
+    num_classes,
+    num_true=1,
+    sampled_values=None,
+    remove_accidental_hits=True,
+    partition_strategy='mod',
+    name='sampled_softmax_loss'
+)
+
+```
+
+Computes and returns the sampled softmax training loss.
+This is a faster way to train a softmax classifier over a huge number of classes.

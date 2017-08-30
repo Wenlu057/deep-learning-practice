@@ -14,6 +14,8 @@ urllib.request.urlretrieve(url[, filename[, reporthook[, data]]])
 
 "The second argument, if present, specifies the file location to copy to (if absent, the location will be a tempfile with a generated name). The third argument, if present, is a hook function that will be called once on establishment of the network connection and once after each block read thereafter. The hook will be passed three arguments; a count of blocks transferred so far, a block size in bytes, and the total size of the file. The third argument may be -1 on older FTP servers which do not return a file size in response to a retrieval request."
 
+Return a tuple (filename, headers) where filename is the local file name under which the object can be found, and headers is whatever the info() method of the object returned by urlopen() returned (for a remote object, possibly cached).
+
 ### Generic Operating System Services
 **os — Miscellaneous operating system interfaces**
 
@@ -110,7 +112,73 @@ tar.extractall(data_root)
 tar.close()
 
 ```
+**zipfile — Work with ZIP archives**
 
+
+```
+zipfile.ZipFile(file[, mode[, compression[, allowZip64]]])
+```
+Open a ZIP file, where file can be either a path to a file (a string) or a file-like object.
+ZipFile is also a context manager and therefore supports the with statement.
+
+Example:
+
+
+```
+with ZipFile('spam.zip', 'w') as myzip:
+    myzip.write('eggs.txt')
+```
+
+
+
+
+```
+ZipFile.read(name[, pwd])
+```
+Return the bytes of the file name in the archive. name is the name of the file in the archive, or a ZipInfo object. The archive must be open for read or append. pwd is the password used for encrypted files.
+
+
+
+```
+ZipFile.namelist()
+```
+Return a list of archive members by name.
+
+
+
+### Data Types
+** collections — High-performance container datatypes**
+
+
+```
+class collections.Counter([iterable-or-mapping])
+```
+A counter tool is provided to support convenient and rapid _tallies_. 
+
+A Counter is a dict subclass for counting hashable objects. It is an unordered collection where elements are stored as dictionary keys and their counts are stored as dictionary values. 
+
+
+```
+>>> c = Counter()                           # a new, empty counter
+>>> c = Counter('gallahad')                 # a new counter from an iterable
+>>> c = Counter({'red': 4, 'blue': 2})      # a new counter from a mapping
+>>> c = Counter(cats=4, dogs=8)             # a new counter from keyword args
+```
+
+
+
+```
+most_common([n])
+```
+
+Return a list of the n most common elements and their counts from the most common to the least. If n is omitted or None, most_common() returns all elements in the counter. Elements with equal counts are ordered arbitrarily
+
+
+```
+>>> Counter('abracadabra').most_common(3)
+[('a', 5), ('r', 2), ('b', 2)]
+```
+Each element is a tuple.
 
 ### Built-in Types
 **
@@ -171,10 +239,11 @@ s.count(x)	total number of occurrences of x in s
 
 
 **Lists**
-Lists are mutable sequences
+Lists are mutable sequences, allow in-place modification of the object.
 Using a pair of square brackets to denote the empty list: []
 Using square brackets, separating items with commas: [a], [a, b, c]
 Using a list comprehension: [x for x in iterable]
+
 
 **Tuples**
 Tuples are immutable sequences
@@ -203,7 +272,10 @@ for example: {'jack': 4098, 'sjoerd': 4127} or {4098: 'jack', 4127: 'sjoerd'}, o
 True
 
 ```
-
+keys()
+Return a copy of the dictionary’s list of keys. See the note for dict.items().
+values()
+Return a copy of the dictionary’s list of values. See the note for dict.items().
 
 ### Built-in Functions
 
@@ -297,5 +369,22 @@ using the digest() or hexdigest() methods.
 
 ```
 >>> hashlib.sha224(b"Nobody inspects the spammish repetition").hexdigest()
+```
+
+### Simple statements
+### assert
+https://stackoverflow.com/questions/5142418/what-is-the-use-of-assert-in-python
+
+
+```
+assert condition
+```
+ you're telling the program to test that condition, and trigger an error if the condition is false.
+
+
+```
+
+if not condition:
+    raise AssertionError()
 ```
 
