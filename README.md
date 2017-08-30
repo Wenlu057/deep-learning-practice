@@ -14,11 +14,7 @@ urllib.request.urlretrieve(url[, filename[, reporthook[, data]]])
 
 "The second argument, if present, specifies the file location to copy to (if absent, the location will be a tempfile with a generated name). The third argument, if present, is a hook function that will be called once on establishment of the network connection and once after each block read thereafter. The hook will be passed three arguments; a count of blocks transferred so far, a block size in bytes, and the total size of the file. The third argument may be -1 on older FTP servers which do not return a file size in response to a retrieval request."
 
-<<<<<<< HEAD
 Return a tuple (filename, headers) where filename is the local file name under which the object can be found, and headers is whatever the info() method of the object returned by urlopen() returned (for a remote object, possibly cached).
-=======
-Return a tuple (filename, headers) where filename is the local file name under which the object can be found, and headers is whatever the info() method of the object returned by urlopen() returned (for a remote object, possibly cached). 
->>>>>>> origin/master
 
 ### Generic Operating System Services
 **os — Miscellaneous operating system interfaces**
