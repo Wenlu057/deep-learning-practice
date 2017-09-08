@@ -360,6 +360,14 @@ random.shuffle(x[, random])
 
 Shuffle the sequence x in place.
 
+
+
+```
+random.sample(population, k)
+```
+
+Return a k length list of unique elements chosen from the population sequence or set. Used for random sampling without replacement.
+
 ### Cryptographic Services
 **hashlib — Secure hashes and message digests**
 For example: use sha256() to create a SHA-256 hash object. 
