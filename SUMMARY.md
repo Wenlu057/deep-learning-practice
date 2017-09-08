@@ -5,4 +5,5 @@
 * [Scipy Reference](scipy-reference.md)
 * [sklearn reference](sklearn-reference.md)
 * [tensorFlow reference](tensorflow-reference.md)
+* [matplotlib reference](matplotlib-reference.md)
 
