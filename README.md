@@ -244,6 +244,27 @@ Using a pair of square brackets to denote the empty list: []
 Using square brackets, separating items with commas: [a], [a, b, c]
 Using a list comprehension: [x for x in iterable]
 
+_Negative numbers mean that you count from the right instead of the left. So, **list[-1] **refers to the last element, list[-2] is the second-last, and so on. List indexes of -x mean the xth item from the end of the list, so n[-1] means the last item in the list n . _
+
+_Assignment with an = on lists does not make a copy. Instead, assignment makes the two variables point to the one list in memory._
+
+_The "empty list" is just an empty pair of brackets [ ]. The '+' works to append _two lists
+
+_The *for* construct -- for var in list -- is an easy way to look at each element in a list (or other collection)_
+
+_The *in* construct on its own is an easy way to test if an element appears in a list (or other collection) -- value in collection -- tests if the value is in the collection, returning True/False._
+
+
+
+```
+Python Expression	         Results	                Description
+len([1, 2, 3])	                   3	                 Length
+[1, 2, 3] + [4, 5, 6]	      [1, 2, 3, 4, 5, 6]	Concatenation
+['Hi!'] * 4	         ['Hi!', 'Hi!', 'Hi!', 'Hi!']	 Repetition
+3 in [1, 2, 3]	                 True	                Membership
+for x in [1, 2, 3]: print x,	  1 2 3	                 Iteration
+```
+
 
 **Tuples**
 Tuples are immutable sequences
@@ -297,6 +318,28 @@ open(file, mode=’r’, buffering=-1, encoding=None, errors=None, newline=None,
 
 
 Open file and return a corresponding file object. If the file cannot be opened, an OSError is raised.
+
+
+
+```
+ord(c)
+```
+Given a string representing one Unicode character, return an integer representing the Unicode code point of that character. For example, ord('a') returns the integer 97 and ord('€') (Euro sign) returns 8364. This is the inverse of chr().
+
+
+
+```
+chr(i)
+```
+Return the string representing a character whose Unicode code point is the integer i. For example, chr(97) returns the string 'a', while chr(8364) returns the string '€'. This is the inverse of ord().
+
+
+
+```
+zip(*iterables)
+```
+Make an iterator that aggregates elements from each of the iterables.
+
 
 ### Data Persistence
 **pickle — Python object serialization**
@@ -378,6 +421,18 @@ using the digest() or hexdigest() methods.
 ```
 >>> hashlib.sha224(b"Nobody inspects the spammish repetition").hexdigest()
 ```
+### Text Processing Services
+** string — Common string operations**
+
+
+```
+string.ascii_lowercase
+```
+The lowercase letters 'abcdefghijklmnopqrstuvwxyz'. This value is not locale-dependent and will not change.
+
+
+
+fast way to concatenate a sequence of strings is by calling `''.join(sequence)`.
 
 ### Simple statements
 ### assert
@@ -396,3 +451,29 @@ if not condition:
     raise AssertionError()
 ```
 
+### Python3 Compatibility
+**Imports**
+All __future__ import have to happen at the top of the module, anything else is seen as a syntax error. All imports from the python-future package should happen below __future__ imports, but before any other.
+
+**Print Statements**
+Print statements are gone in python3. Please import `from __future__ import print_function` at the very top of the module to enable use of python3 style print functions
+
+
+### six 1.10.0
+https://pypi.python.org/pypi/six/
+**Python 2 and 3 compatibility utilities**
+Six is a Python 2 and 3 compatibility library. It provides utility functions for smoothing over the differences between the Python versions with the goal of writing Python code that is compatible on both Python versions. 
+
+
+### Python "with" Statement
+http://preshing.com/20110920/the-python-with-statement-by-example/
+Python’s with statement was first introduced five years ago, in Python 2.5. It’s handy when you have two related operations which you’d like to execute as a pair, with a block of code in between. The classic example is opening a file, manipulating the file, then closing it:
+
+
+```
+with open('output.txt', 'w') as f:
+    f.write('Hi there!')
+```
+
+The above with statement will automatically close the file after the nested block of code.
+ it is guaranteed to close the file no matter how the nested block exits. 

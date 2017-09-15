@@ -39,6 +39,25 @@ array([[1, 2],
 
 
 ### Routines
+**Mathematical functions**
+
+```
+numpy.multiply(x1, x2, /, out=None, *, where=True, casting='same_kind', order='K', dtype=None, subok=True[, signature, extobj]) = <ufunc 'multiply'>
+```
+Multiply arguments element-wise.
+
+```
+numpy.log(x, /, out=None, *, where=True, casting='same_kind', order='K', dtype=None, subok=True[, signature, extobj]) = <ufunc 'log'>
+```
+Natural logarithm, element-wise.
+The natural logarithm log is the inverse of the exponential function, so that log(exp(x)) = x. The natural logarithm is logarithm in base e.
+
+```
+
+numpy.sum(a, axis=None, dtype=None, out=None, keepdims=<class numpy._globals._NoValue>)
+```
+Sum of array elements over a given axis.
+
 **Array manipulation routines**
 
 

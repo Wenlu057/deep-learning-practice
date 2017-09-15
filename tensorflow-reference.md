@@ -45,6 +45,19 @@ A default Graph is always registered, and accessible by calling tf.get_default_g
 **tf.get_default_graph**
 Returns the default graph for the current thread.
 
+
+**control_dependencies**
+
+
+```
+control_dependencies(control_inputs)
+```
+Returns a context manager that specifies control dependencies.
+
+Args:
+
+control_inputs: A list of Operation or Tensor objects which must be executed or computed before running the operations defined in the context. Can also be None to clear the control dependencies.
+
 ### tf.device
 
 
@@ -148,6 +161,33 @@ reduce_mean(
 
 Computes the mean of elements across dimensions of a tensor.
 
+### Slicing and Joining
+**tf.concat**
+
+
+```
+concat(
+    values,
+    axis,
+    name='concat'
+)
+```
+
+Concatenates tensors along one dimension.
+
+### Gradient Clipping
+**tf.clip_by_global_norm**
+
+
+```
+clip_by_global_norm(
+    t_list,
+    clip_norm,
+    use_norm=None,
+    name=None
+)
+```
+Clips values of multiple tensors by the ratio of the sum of their norms.
 
 ### Constants, Sequences, and Random Values
 **tf.zeros**
@@ -194,6 +234,21 @@ random_uniform(
 ```
 Outputs random values from a uniform distribution.
 
+### Control Flow
+**_Control Flow Operations_**
+TensorFlow provides several operations and classes that you can use to control the execution of operations and add conditional dependencies to your graph.
+
+**tf.group**
+
+
+```
+group(
+    *inputs,
+    **kwargs
+)
+```
+Create an op that groups multiple operations.
+When this op finishes, all ops in input have finished. This op has no output.
 
 ### Module: tf.compat
 **tf.compat.as_str**
@@ -207,6 +262,8 @@ as_str(
 ```
 Converts either bytes or unicode to bytes, using utf-8 encoding for text.
 Returns: A bytes object.
+
+
 ### Module: tf.train
 Support for training models.
 **tf.train.GradientDescentOptimizer**
@@ -224,6 +281,37 @@ __init__(
 ```
 learning_rate: A Tensor or a floating point value. The learning rate to use.
 
+**apply_gradients**
+Apply gradients to variables.
+This is the second part of minimize(). It returns an Operation that applies gradients.
+
+```
+apply_gradients(
+    grads_and_vars,
+    global_step=None,
+    name=None
+)
+```
+Args:
+grads_and_vars: List of (gradient, variable) pairs as returned by compute_gradients().
+global_step: Optional Variable to increment by one after the variables have been updated.
+name: Optional name for the returned operation. Default to the name passed to the Optimizer constructor.
+
+**compute_gradients**
+
+
+```
+compute_gradients(
+    loss,
+    var_list=None,
+    gate_gradients=GATE_OP,
+    aggregation_method=None,
+    colocate_gradients_with_ops=False,
+    grad_loss=None
+)
+```
+Compute gradients of loss for the variables in var_list.
+
 **minimize**
 
 
@@ -239,6 +327,23 @@ minimize(
     grad_loss=None
 )
 ```
+**tf.train.AdagradOptimizer**
+Optimizer that implements the Adagrad algorithm.
+
+**tf.train.exponential_decay**
+
+
+```
+exponential_decay(
+    learning_rate,
+    global_step,
+    decay_steps,
+    decay_rate,
+    staircase=False,
+    name=None
+)
+```
+Applies exponential decay to the learning rate.
 
 ### Module: tf.nn
 Neural network support.
@@ -400,3 +505,27 @@ sampled_softmax_loss(
 
 Computes and returns the sampled softmax training loss.
 This is a faster way to train a softmax classifier over a huge number of classes.
+
+weights: A Tensor of shape [num_classes, dim]
+biases: A Tensor of shape [num_classes]. The class biases.
+labels: A Tensor of type int64 and shape [batch_size, num_true]. The target classes.
+inputs: A Tensor of shape [batch_size, dim]
+num_sampled: An int. The number of classes to randomly sample per batch.
+num_classes: An int. The number of possible classes.
+
+
+### tf.nn.xw_plus_b
+
+
+```
+xw_plus_b(
+    x,
+    weights,
+    biases,
+    name=None
+)
+```
+Computes matmul(x, weights) + biases.
+
+Returns:
+A 2-D Tensor computing matmul(x, weights) + biases. Dimensions typically: batch, out_units.
