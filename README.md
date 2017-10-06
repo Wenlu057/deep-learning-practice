@@ -300,6 +300,49 @@ zip(*iterables)
 
 Make an iterator that aggregates elements from each of the iterables.
 
+
+```
+
+divmod(a,b)
+```
+Take two (non complex) numbers as arguments and return a pair of numbers consisting of their quotient and remainder when using integer division. With mixed operand types, the rules for binary arithmetic operators apply. For integers, the result is the same as (a // b, a % b). 
+
+
+
+```
+map(function, iterable, …)
+```
+Return an iterator that applies function to every item of iterable, yielding the results. 
+
+
+### Input and output
+
+
+```
+str.format()
+```
+
+
+The brackets and characters within them (called format fields) are replaced with the objects passed into the str.format() method. A number in the brackets can be used to refer to the position of the object passed into the str.format() method.
+
+
+```
+
+>>> print('We are the {} who say "{}!"'.format('knights', 'Ni'))
+We are the knights who say "Ni!"
+
+```
+
+The **% operator** can also be used for string formatting. It interprets the left argument much like a sprintf()-style format string to be applied to the right argument, and returns the string resulting from this formatting operation. 
+
+
+```
+>>> import math
+>>> print('The value of PI is approximately %5.3f.' % math.pi)
+The value of PI is approximately 3.142.
+```
+
+
 ### Data Persistence
 
 **pickle — Python object serialization**  
@@ -336,6 +379,16 @@ random.seed(a=None, version=2)
 ```
 
 Initialize the random number generator.
+
+
+
+```
+random.random()
+```
+
+
+
+Return the next random floating point number in the range [0.0, 1.0).
 
 ```
 random.choice(seq)
@@ -377,6 +430,29 @@ string.ascii_lowercase
 The lowercase letters 'abcdefghijklmnopqrstuvwxyz'. This value is not locale-dependent and will not change.
 
 fast way to concatenate a sequence of strings is by calling `''.join(sequence)`.
+
+### Lambda Function
+An anonymous inline function consisting of a single expression which is evaluated when the function is called. The syntax to create a lambda function is lambda [arguments]: expression
+
+The advantage of the lambda operator can be seen when it is used in combination with the map() function. 
+map() is a function with two arguments:
+
+
+```
+r = map(func, seq)
+```
+The first argument func is the name of a function and the second a sequence (e.g. a list) seq. map() applies the function func to all the elements of the sequence seq. It returns a new list with the elements changed by func.
+
+
+```
+>>> Celsius = [39.2, 36.5, 37.3, 37.8]
+>>> Fahrenheit = map(lambda x: (float(9)/5)*x + 32, Celsius)
+>>> print Fahrenheit
+[102.56, 97.700000000000003, 99.140000000000001, 100.03999999999999]
+```
+
+
+
 
 ### Simple statements
 

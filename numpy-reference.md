@@ -68,6 +68,17 @@ numpy.concatenate((a1, a2, ...), axis=0)
 
 Join a sequence of arrays along an existing axis.
 
+**Array creation routines**
+
+
+```
+numpy.frombuffer(buffer, dtype=float, count=-1, offset=0)
+```
+Interpret a buffer as a 1-dimensional array.
+
+
+
+
 ### Logic functions
 **Comparison**
 
